@@ -644,6 +644,7 @@ public class DefaultShader extends BaseShader {
 		tmpAttributes.clear();
 		if (renderable.environment != null) tmpAttributes.set(renderable.environment);
 		if (renderable.material != null) tmpAttributes.set(renderable.material);
+		if (renderable.override != null) tmpAttributes.set(renderable.override);
 		return tmpAttributes;
 	}
 
@@ -651,6 +652,7 @@ public class DefaultShader extends BaseShader {
 		long mask = 0;
 		if (renderable.environment != null) mask |= renderable.environment.getMask();
 		if (renderable.material != null) mask |= renderable.material.getMask();
+		if (renderable.override != null) mask |= renderable.override.getMask();
 		return mask;
 	}
 

@@ -159,6 +159,7 @@ public class DepthShader extends DefaultShader {
 		tmpAttributes.clear();
 		if (renderable.environment != null) tmpAttributes.set(renderable.environment);
 		if (renderable.material != null) tmpAttributes.set(renderable.material);
+		if (renderable.override != null) tmpAttributes.set(renderable.override);
 		return tmpAttributes;
 	}
 }
