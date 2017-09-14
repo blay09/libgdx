@@ -113,6 +113,7 @@ public class DefaultShader extends BaseShader {
 		public final static Uniform ambientUVTransform = new Uniform("u_ambientUVTransform", TextureAttribute.Ambient);
 		public final static Uniform alphaTest = new Uniform("u_alphaTest");
 
+		public final static Uniform ambientLight = new Uniform("u_ambientLight");
 		public final static Uniform ambientCube = new Uniform("u_ambientCubemap");
 		public final static Uniform dirLights = new Uniform("u_dirLights");
 		public final static Uniform pointLights = new Uniform("u_pointLights");
@@ -334,6 +335,12 @@ public class DefaultShader extends BaseShader {
 				shader.set(inputID, ta.offsetU, ta.offsetV, ta.scaleU, ta.scaleV);
 			}
 		};
+		public final static Setter ambientLight = new LocalSetter() {
+			@Override
+			public void set(BaseShader shader, int inputID, Renderable renderable, Attributes combinedAttributes) {
+				shader.set(inputID, ((ColorAttribute)(combinedAttributes.get(ColorAttribute.AmbientLight))).color);
+			}
+		};
 
 		public static class ACubemap extends LocalSetter {
 			private final static float ones[] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
@@ -446,6 +453,7 @@ public class DefaultShader extends BaseShader {
 	public final int u_ambientUVTransform;
 	public final int u_alphaTest;
 	// Lighting uniforms
+	protected final int u_ambientLight;
 	protected final int u_ambientCubemap;
 	protected final int u_environmentCubemap;
 	protected final int u_dirLights0color = register(new Uniform("u_dirLights[0].color"));
@@ -583,6 +591,8 @@ public class DefaultShader extends BaseShader {
 		u_ambientUVTransform = register(Inputs.ambientUVTransform, Setters.ambientUVTransform);
 		u_alphaTest = register(Inputs.alphaTest);
 
+		u_ambientLight = lighting ? register(Inputs.ambientLight, Setters.ambientLight) : -1;
+
 		u_ambientCubemap = lighting ? register(Inputs.ambientCube, new Setters.ACubemap(config.numDirectionalLights,
 			config.numPointLights)) : -1;
 		u_environmentCubemap = environmentCubemap ? register(Inputs.environmentCubemap, Setters.environmentCubemap) : -1;
@@ -657,6 +667,7 @@ public class DefaultShader extends BaseShader {
 		if (and(vertexMask, Usage.Normal) || and(vertexMask, Usage.Tangent | Usage.BiNormal)) {
 			if (renderable.environment != null) {
 				prefix += "#define lightingFlag\n";
+				prefix += "#define ambientLightFlag";
 				prefix += "#define ambientCubemapFlag\n";
 				prefix += "#define numDirectionalLights " + config.numDirectionalLights + "\n";
 				prefix += "#define numPointLights " + config.numPointLights + "\n";

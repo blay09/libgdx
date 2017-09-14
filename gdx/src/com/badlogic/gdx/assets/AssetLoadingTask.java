@@ -33,7 +33,7 @@ import com.badlogic.gdx.utils.async.AsyncTask;
  * @author mzechner */
 class AssetLoadingTask implements AsyncTask<Void> {
 	AssetManager manager;
-	protected final AssetDescriptor assetDesc;
+	public final AssetDescriptor assetDesc;
 	final AssetLoader loader;
 	final AsyncExecutor executor;
 	final long startTime;
