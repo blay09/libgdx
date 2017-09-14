@@ -230,6 +230,7 @@ public abstract class BaseShader implements Shader {
 		combinedAttributes.clear();
 		if (renderable.environment != null) combinedAttributes.set(renderable.environment);
 		if (renderable.material != null) combinedAttributes.set(renderable.material);
+		if (renderable.override != null) combinedAttributes.set(renderable.override);
 		render(renderable, combinedAttributes);
 	}
 
