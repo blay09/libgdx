@@ -667,7 +667,7 @@ public class DefaultShader extends BaseShader {
 		if (and(vertexMask, Usage.Normal) || and(vertexMask, Usage.Tangent | Usage.BiNormal)) {
 			if (renderable.environment != null) {
 				prefix += "#define lightingFlag\n";
-				prefix += "#define ambientLightFlag";
+				prefix += "#define ambientLightFlag\n";
 				prefix += "#define ambientCubemapFlag\n";
 				prefix += "#define numDirectionalLights " + config.numDirectionalLights + "\n";
 				prefix += "#define numPointLights " + config.numPointLights + "\n";
