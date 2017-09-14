@@ -75,7 +75,7 @@ public class AssetManager implements Disposable {
 	final Array<AssetDescriptor> loadQueue = new Array();
 	final AsyncExecutor executor;
 
-	final Stack<AssetLoadingTask> tasks = new Stack();
+	protected final Stack<AssetLoadingTask> tasks = new Stack();
 	AssetErrorListener listener = null;
 	int loaded = 0;
 	int toLoad = 0;
