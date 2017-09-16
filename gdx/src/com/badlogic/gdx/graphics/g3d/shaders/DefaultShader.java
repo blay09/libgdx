@@ -111,6 +111,8 @@ public class DefaultShader extends BaseShader {
 		public final static Uniform normalUVTransform = new Uniform("u_normalUVTransform", TextureAttribute.Normal);
 		public final static Uniform ambientTexture = new Uniform("u_ambientTexture", TextureAttribute.Ambient);
 		public final static Uniform ambientUVTransform = new Uniform("u_ambientUVTransform", TextureAttribute.Ambient);
+		public final static Uniform transparencyTexture = new Uniform("u_transparencyTexture", TextureAttribute.Transparency);
+		public final static Uniform transparencyUVTransform = new Uniform("u_transparencyTransform", TextureAttribute.Transparency);
 		public final static Uniform alphaTest = new Uniform("u_alphaTest");
 
 		public final static Uniform ambientLight = new Uniform("u_ambientLight");
@@ -335,6 +337,21 @@ public class DefaultShader extends BaseShader {
 				shader.set(inputID, ta.offsetU, ta.offsetV, ta.scaleU, ta.scaleV);
 			}
 		};
+		public final static Setter transparencyTexture = new LocalSetter() {
+			@Override
+			public void set (BaseShader shader, int inputID, Renderable renderable, Attributes combinedAttributes) {
+				final int unit = shader.context.textureBinder.bind(((TextureAttribute)(combinedAttributes
+						.get(TextureAttribute.Transparency))).textureDescription);
+				shader.set(inputID, unit);
+			}
+		};
+		public final static Setter transparencyUVTransform = new LocalSetter() {
+			@Override
+			public void set (BaseShader shader, int inputID, Renderable renderable, Attributes combinedAttributes) {
+				final TextureAttribute ta = (TextureAttribute)(combinedAttributes.get(TextureAttribute.Transparency));
+				shader.set(inputID, ta.offsetU, ta.offsetV, ta.scaleU, ta.scaleV);
+			}
+		};
 		public final static Setter ambientLight = new LocalSetter() {
 			@Override
 			public void set(BaseShader shader, int inputID, Renderable renderable, Attributes combinedAttributes) {
@@ -451,6 +468,8 @@ public class DefaultShader extends BaseShader {
 	public final int u_normalUVTransform;
 	public final int u_ambientTexture;
 	public final int u_ambientUVTransform;
+	public final int u_transparencyTexture;
+	public final int u_transparencyUVTransform;
 	public final int u_alphaTest;
 	// Lighting uniforms
 	protected final int u_ambientLight;
@@ -589,6 +608,8 @@ public class DefaultShader extends BaseShader {
 		u_normalUVTransform = register(Inputs.normalUVTransform, Setters.normalUVTransform);
 		u_ambientTexture = register(Inputs.ambientTexture, Setters.ambientTexture);
 		u_ambientUVTransform = register(Inputs.ambientUVTransform, Setters.ambientUVTransform);
+		u_transparencyTexture = register(Inputs.transparencyTexture, Setters.transparencyTexture);
+		u_transparencyUVTransform = register(Inputs.transparencyUVTransform, Setters.transparencyUVTransform);
 		u_alphaTest = register(Inputs.alphaTest);
 
 		u_ambientLight = lighting ? register(Inputs.ambientLight, Setters.ambientLight) : -1;
@@ -713,6 +734,10 @@ public class DefaultShader extends BaseShader {
 		if ((attributesMask & TextureAttribute.Ambient) == TextureAttribute.Ambient) {
 			prefix += "#define " + TextureAttribute.AmbientAlias + "Flag\n";
 			prefix += "#define " + TextureAttribute.AmbientAlias + "Coord texCoord0\n"; // FIXME implement UV mapping
+		}
+		if ((attributesMask & TextureAttribute.Transparency) == TextureAttribute.Transparency) {
+			prefix += "#define " + TextureAttribute.TransparencyAlias + "Flag\n";
+			prefix += "#define " + TextureAttribute.TransparencyAlias + "Coord texCoord0\n"; // FIXME implement UV mapping
 		}
 		if ((attributesMask & ColorAttribute.Diffuse) == ColorAttribute.Diffuse)
 			prefix += "#define " + ColorAttribute.DiffuseAlias + "Flag\n";
