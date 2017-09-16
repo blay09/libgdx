@@ -112,7 +112,7 @@ public class DefaultShader extends BaseShader {
 		public final static Uniform ambientTexture = new Uniform("u_ambientTexture", TextureAttribute.Ambient);
 		public final static Uniform ambientUVTransform = new Uniform("u_ambientUVTransform", TextureAttribute.Ambient);
 		public final static Uniform transparencyTexture = new Uniform("u_transparencyTexture", TextureAttribute.Transparency);
-		public final static Uniform transparencyUVTransform = new Uniform("u_transparencyTransform", TextureAttribute.Transparency);
+		public final static Uniform transparencyUVTransform = new Uniform("u_transparencyUVTransform", TextureAttribute.Transparency);
 		public final static Uniform alphaTest = new Uniform("u_alphaTest");
 
 		public final static Uniform ambientLight = new Uniform("u_ambientLight");
