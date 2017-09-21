@@ -36,6 +36,7 @@ public class ModelMaterial {
 
 	public float shininess;
 	public float opacity = 1.f;
+	public float alphaTest = -1f;
 
 	public Array<ModelTexture> textures;
 }

@@ -200,6 +200,8 @@ public class G3dModelLoader extends ModelLoader<ModelLoader.ModelParameters> {
 				jsonMaterial.shininess = material.getFloat("shininess", 0.0f);
 				// Read opacity
 				jsonMaterial.opacity = material.getFloat("opacity", 1.0f);
+				// Read alphaTest
+				jsonMaterial.alphaTest = material.getFloat("alphaTest", -1f);
 
 				// Read textures
 				JsonValue textures = material.get("textures");

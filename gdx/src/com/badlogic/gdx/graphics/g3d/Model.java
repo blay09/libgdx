@@ -301,6 +301,7 @@ public class Model implements Disposable {
 		if (mtl.emissive != null) result.set(new ColorAttribute(ColorAttribute.Emissive, mtl.emissive));
 		if (mtl.reflection != null) result.set(new ColorAttribute(ColorAttribute.Reflection, mtl.reflection));
 		if (mtl.shininess > 0f) result.set(new FloatAttribute(FloatAttribute.Shininess, mtl.shininess));
+		if (mtl.alphaTest != -1f) result.set(new FloatAttribute(FloatAttribute.AlphaTest, mtl.alphaTest));
 		if (mtl.opacity != 1.f)
 			result.set(new BlendingAttribute(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA, mtl.opacity));
 
