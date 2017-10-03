@@ -180,7 +180,7 @@ public class JsonWriter extends Writer {
 
 		static private Pattern javascriptPattern = Pattern.compile("^[a-zA-Z_$][a-zA-Z_$0-9]*$");
 		static private Pattern minimalNamePattern = Pattern.compile("^[^\":,}/ ][^:]*$");
-		static private Pattern minimalValuePattern = Pattern.compile("^[^\":,{\\[\\]/ ][^}\\],]*$");
+		static private Pattern minimalValuePattern = Pattern.compile("^[^0-9\":,{\\[\\]/ ][^}\\],]*$");
 
 		public String quoteValue (Object value) {
 			if (value == null) return "null";
