@@ -350,7 +350,7 @@ public class AnimationController extends BaseAnimationController {
 	}
 
 	/** Changes the current animation by blending the new on top of the old during the transition time. */
-	protected AnimationDesc animate (final Animation anim, float offset, float duration, int loopCount, float speed,
+	public AnimationDesc animate (final Animation anim, float offset, float duration, int loopCount, float speed,
 		final AnimationListener listener, float transitionTime) {
 		return animate(obtain(anim, offset, duration, loopCount, speed, listener), transitionTime);
 	}
