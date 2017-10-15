@@ -111,11 +111,8 @@ public class DefaultShader extends BaseShader {
 		public final static Uniform normalUVTransform = new Uniform("u_normalUVTransform", TextureAttribute.Normal);
 		public final static Uniform ambientTexture = new Uniform("u_ambientTexture", TextureAttribute.Ambient);
 		public final static Uniform ambientUVTransform = new Uniform("u_ambientUVTransform", TextureAttribute.Ambient);
-		public final static Uniform transparencyTexture = new Uniform("u_transparencyTexture", TextureAttribute.Transparency);
-		public final static Uniform transparencyUVTransform = new Uniform("u_transparencyUVTransform", TextureAttribute.Transparency);
 		public final static Uniform alphaTest = new Uniform("u_alphaTest");
 
-		public final static Uniform ambientLight = new Uniform("u_ambientLight");
 		public final static Uniform ambientCube = new Uniform("u_ambientCubemap");
 		public final static Uniform dirLights = new Uniform("u_dirLights");
 		public final static Uniform pointLights = new Uniform("u_pointLights");
@@ -337,27 +334,6 @@ public class DefaultShader extends BaseShader {
 				shader.set(inputID, ta.offsetU, ta.offsetV, ta.scaleU, ta.scaleV);
 			}
 		};
-		public final static Setter transparencyTexture = new LocalSetter() {
-			@Override
-			public void set (BaseShader shader, int inputID, Renderable renderable, Attributes combinedAttributes) {
-				final int unit = shader.context.textureBinder.bind(((TextureAttribute)(combinedAttributes
-						.get(TextureAttribute.Transparency))).textureDescription);
-				shader.set(inputID, unit);
-			}
-		};
-		public final static Setter transparencyUVTransform = new LocalSetter() {
-			@Override
-			public void set (BaseShader shader, int inputID, Renderable renderable, Attributes combinedAttributes) {
-				final TextureAttribute ta = (TextureAttribute)(combinedAttributes.get(TextureAttribute.Transparency));
-				shader.set(inputID, ta.offsetU, ta.offsetV, ta.scaleU, ta.scaleV);
-			}
-		};
-		public final static Setter ambientLight = new LocalSetter() {
-			@Override
-			public void set(BaseShader shader, int inputID, Renderable renderable, Attributes combinedAttributes) {
-				shader.set(inputID, ((ColorAttribute)(combinedAttributes.get(ColorAttribute.AmbientLight))).color);
-			}
-		};
 
 		public static class ACubemap extends LocalSetter {
 			private final static float ones[] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
@@ -468,11 +444,8 @@ public class DefaultShader extends BaseShader {
 	public final int u_normalUVTransform;
 	public final int u_ambientTexture;
 	public final int u_ambientUVTransform;
-	public final int u_transparencyTexture;
-	public final int u_transparencyUVTransform;
 	public final int u_alphaTest;
 	// Lighting uniforms
-	protected final int u_ambientLight;
 	protected final int u_ambientCubemap;
 	protected final int u_environmentCubemap;
 	protected final int u_dirLights0color = register(new Uniform("u_dirLights[0].color"));
@@ -608,11 +581,7 @@ public class DefaultShader extends BaseShader {
 		u_normalUVTransform = register(Inputs.normalUVTransform, Setters.normalUVTransform);
 		u_ambientTexture = register(Inputs.ambientTexture, Setters.ambientTexture);
 		u_ambientUVTransform = register(Inputs.ambientUVTransform, Setters.ambientUVTransform);
-		u_transparencyTexture = register(Inputs.transparencyTexture, Setters.transparencyTexture);
-		u_transparencyUVTransform = register(Inputs.transparencyUVTransform, Setters.transparencyUVTransform);
 		u_alphaTest = register(Inputs.alphaTest);
-
-		u_ambientLight = lighting ? register(Inputs.ambientLight, Setters.ambientLight) : -1;
 
 		u_ambientCubemap = lighting ? register(Inputs.ambientCube, new Setters.ACubemap(config.numDirectionalLights,
 			config.numPointLights)) : -1;
@@ -665,7 +634,6 @@ public class DefaultShader extends BaseShader {
 		tmpAttributes.clear();
 		if (renderable.environment != null) tmpAttributes.set(renderable.environment);
 		if (renderable.material != null) tmpAttributes.set(renderable.material);
-		if (renderable.override != null) tmpAttributes.set(renderable.override);
 		return tmpAttributes;
 	}
 
@@ -673,7 +641,6 @@ public class DefaultShader extends BaseShader {
 		long mask = 0;
 		if (renderable.environment != null) mask |= renderable.environment.getMask();
 		if (renderable.material != null) mask |= renderable.material.getMask();
-		if (renderable.override != null) mask |= renderable.override.getMask();
 		return mask;
 	}
 
@@ -690,7 +657,6 @@ public class DefaultShader extends BaseShader {
 		if (and(vertexMask, Usage.Normal) || and(vertexMask, Usage.Tangent | Usage.BiNormal)) {
 			if (renderable.environment != null) {
 				prefix += "#define lightingFlag\n";
-				prefix += "#define ambientLightFlag\n";
 				prefix += "#define ambientCubemapFlag\n";
 				prefix += "#define numDirectionalLights " + config.numDirectionalLights + "\n";
 				prefix += "#define numPointLights " + config.numPointLights + "\n";
@@ -734,10 +700,6 @@ public class DefaultShader extends BaseShader {
 		if ((attributesMask & TextureAttribute.Ambient) == TextureAttribute.Ambient) {
 			prefix += "#define " + TextureAttribute.AmbientAlias + "Flag\n";
 			prefix += "#define " + TextureAttribute.AmbientAlias + "Coord texCoord0\n"; // FIXME implement UV mapping
-		}
-		if ((attributesMask & TextureAttribute.Transparency) == TextureAttribute.Transparency) {
-			prefix += "#define " + TextureAttribute.TransparencyAlias + "Flag\n";
-			prefix += "#define " + TextureAttribute.TransparencyAlias + "Coord texCoord0\n"; // FIXME implement UV mapping
 		}
 		if ((attributesMask & ColorAttribute.Diffuse) == ColorAttribute.Diffuse)
 			prefix += "#define " + ColorAttribute.DiffuseAlias + "Flag\n";

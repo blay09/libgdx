@@ -39,10 +39,8 @@ public class TextureAttribute extends Attribute {
 	public final static long Emissive = register(EmissiveAlias);
 	public final static String ReflectionAlias = "reflectionTexture";
 	public final static long Reflection = register(ReflectionAlias);
-	public final static String TransparencyAlias = "transparencyTexture";
-	public final static long Transparency = register(TransparencyAlias);
 	
-	protected static long Mask = Diffuse | Specular | Bump | Normal | Ambient | Emissive | Reflection | Transparency;
+	protected static long Mask = Diffuse | Specular | Bump | Normal | Ambient | Emissive | Reflection;
 
 	public final static boolean is (final long mask) {
 		return (mask & Mask) != 0;
@@ -102,10 +100,6 @@ public class TextureAttribute extends Attribute {
 	
 	public static TextureAttribute createReflection (final TextureRegion region) {
 		return new TextureAttribute(Reflection, region);
-	}
-
-	public static TextureAttribute createTransparency (final TextureRegion region) {
-		return new TextureAttribute(Transparency, region);
 	}
 
 	public final TextureDescriptor<Texture> textureDescription;

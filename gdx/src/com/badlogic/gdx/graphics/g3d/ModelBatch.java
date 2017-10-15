@@ -275,32 +275,6 @@ public class ModelBatch implements Disposable {
 	}
 
 	/** Calls {@link RenderableProvider#getRenderables(Array, Pool)} and adds all returned {@link Renderable} instances to the
-	 * current batch to be rendered. Any environment set on the returned renderables will be replaced with the given environment.
-	 * Can only be called after a call to {@link #begin(Camera)} and before a call to {@link #end()}.
-	 * @param renderableProvider the renderable provider
-	 * @param environment the {@link Environment} to use for the renderables */
-	public void render (final RenderableProvider renderableProvider, final Environment environment, final Attributes override) {
-		final int offset = renderables.size;
-		renderableProvider.getRenderables(renderables, renderablesPool);
-		for (int i = offset; i < renderables.size; i++) {
-			Renderable renderable = renderables.get(i);
-			renderable.environment = environment;
-			renderable.override = override;
-			renderable.shader = shaderProvider.getShader(renderable);
-		}
-	}
-
-	/** Calls {@link RenderableProvider#getRenderables(Array, Pool)} and adds all returned {@link Renderable} instances to the
-	 * current batch to be rendered. Any environment set on the returned renderables will be replaced with the given environment.
-	 * Can only be called after a call to {@link #begin(Camera)} and before a call to {@link #end()}.
-	 * @param renderableProviders one or more renderable providers
-	 * @param environment the {@link Environment} to use for the renderables */
-	public <T extends RenderableProvider> void render (final Iterable<T> renderableProviders, final Environment environment, final Attributes override) {
-		for (final RenderableProvider renderableProvider : renderableProviders)
-			render(renderableProvider, environment, override);
-	}
-
-	/** Calls {@link RenderableProvider#getRenderables(Array, Pool)} and adds all returned {@link Renderable} instances to the
 	 * current batch to be rendered. Any shaders set on the returned renderables will be replaced with the given {@link Shader}.
 	 * Can only be called after a call to {@link #begin(Camera)} and before a call to {@link #end()}.
 	 * @param renderableProvider the renderable provider

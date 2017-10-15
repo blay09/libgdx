@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2011 See AUTHORS file.
- *
+ * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -55,76 +55,54 @@ import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.utils.ObjectMap;
 
-/**
- * A model represents a 3D assets. It stores a hierarchy of nodes. A node has a transform and optionally a graphical part in form
+/** A model represents a 3D assets. It stores a hierarchy of nodes. A node has a transform and optionally a graphical part in form
  * of a {@link MeshPart} and {@link Material}. Mesh parts reference subsets of vertices in one of the meshes of the model.
  * Animations can be applied to nodes, to modify their transform (translation, rotation, scale) over time.</p>
- * <p>
+ * 
  * A model can be rendered by creating a {@link ModelInstance} from it. That instance has an additional transform to position the
  * model in the world, and allows modification of materials and nodes without destroying the original model. The original model is
  * the owner of any meshes and textures, all instances created from the model share these resources. Disposing the model will
  * automatically make all instances invalid!</p>
- * <p>
+ * 
  * A model is created from {@link ModelData}, which in turn is loaded by a {@link ModelLoader}.
- *
- * @author badlogic, xoppa
- */
+ * 
+ * @author badlogic, xoppa */
 public class Model implements Disposable {
-	/**
-	 * the materials of the model, used by nodes that have a graphical representation FIXME not sure if superfluous, allows
-	 * modification of materials without having to traverse the nodes
-	 **/
+	/** the materials of the model, used by nodes that have a graphical representation FIXME not sure if superfluous, allows
+	 * modification of materials without having to traverse the nodes **/
 	public final Array<Material> materials = new Array();
-	/**
-	 * root nodes of the model
-	 **/
+	/** root nodes of the model **/
 	public final Array<Node> nodes = new Array();
-	/**
-	 * animations of the model, modifying node transformations
-	 **/
+	/** animations of the model, modifying node transformations **/
 	public final Array<Animation> animations = new Array();
-	/**
-	 * the meshes of the model
-	 **/
+	/** the meshes of the model **/
 	public final Array<Mesh> meshes = new Array();
-	/**
-	 * parts of meshes, used by nodes that have a graphical representation FIXME not sure if superfluous, stored in Nodes as well,
-	 * could be useful to create bullet meshes
-	 **/
+	/** parts of meshes, used by nodes that have a graphical representation FIXME not sure if superfluous, stored in Nodes as well,
+	 * could be useful to create bullet meshes **/
 	public final Array<MeshPart> meshParts = new Array();
-	/**
-	 * Array of disposable resources like textures or meshes the Model is responsible for disposing
-	 **/
+	/** Array of disposable resources like textures or meshes the Model is responsible for disposing **/
 	protected final Array<Disposable> disposables = new Array();
 
-	/**
-	 * Constructs an empty model. Manual created models do not manage their resources by default. Use
-	 * {@link #manageDisposable(Disposable)} to add resources to be managed by this model.
-	 */
-	public Model() {
+	/** Constructs an empty model. Manual created models do not manage their resources by default. Use
+	 * {@link #manageDisposable(Disposable)} to add resources to be managed by this model. */
+	public Model () {
 	}
 
-	/**
-	 * Constructs a new Model based on the {@link ModelData}. Texture files will be loaded from the internal file storage via an
+	/** Constructs a new Model based on the {@link ModelData}. Texture files will be loaded from the internal file storage via an
 	 * {@link FileTextureProvider}.
-	 *
-	 * @param modelData the {@link ModelData} got from e.g. {@link ModelLoader}
-	 */
-	public Model(ModelData modelData) {
+	 * @param modelData the {@link ModelData} got from e.g. {@link ModelLoader} */
+	public Model (ModelData modelData) {
 		this(modelData, new FileTextureProvider());
 	}
 
-	/**
-	 * Constructs a new Model based on the {@link ModelData}.
-	 *
-	 * @param modelData       the {@link ModelData} got from e.g. {@link ModelLoader}
-	 * @param textureProvider the {@link TextureProvider} to use for loading the textures
-	 */
-	public Model(ModelData modelData, TextureProvider textureProvider) {
+	/** Constructs a new Model based on the {@link ModelData}.
+	 * @param modelData the {@link ModelData} got from e.g. {@link ModelLoader}
+	 * @param textureProvider the {@link TextureProvider} to use for loading the textures */
+	public Model (ModelData modelData, TextureProvider textureProvider) {
 		load(modelData, textureProvider);
 	}
 
-	protected void load(ModelData modelData, TextureProvider textureProvider) {
+	protected void load (ModelData modelData, TextureProvider textureProvider) {
 		loadMeshes(modelData.meshes);
 		loadMaterials(modelData.materials, textureProvider);
 		loadNodes(modelData.nodes);
@@ -132,7 +110,7 @@ public class Model implements Disposable {
 		calculateTransforms();
 	}
 
-	protected void loadAnimations(Iterable<ModelAnimation> modelAnimations) {
+	protected void loadAnimations (Iterable<ModelAnimation> modelAnimations) {
 		for (final ModelAnimation anim : modelAnimations) {
 			Animation animation = new Animation();
 			animation.id = anim.id;
@@ -148,7 +126,7 @@ public class Model implements Disposable {
 					for (ModelNodeKeyframe<Vector3> kf : nanim.translation) {
 						if (kf.keytime > animation.duration) animation.duration = kf.keytime;
 						nodeAnim.translation.add(new NodeKeyframe<Vector3>(kf.keytime, new Vector3(kf.value == null ? node.translation
-								: kf.value)));
+							: kf.value)));
 					}
 				}
 
@@ -158,7 +136,7 @@ public class Model implements Disposable {
 					for (ModelNodeKeyframe<Quaternion> kf : nanim.rotation) {
 						if (kf.keytime > animation.duration) animation.duration = kf.keytime;
 						nodeAnim.rotation.add(new NodeKeyframe<Quaternion>(kf.keytime, new Quaternion(kf.value == null ? node.rotation
-								: kf.value)));
+							: kf.value)));
 					}
 				}
 
@@ -168,14 +146,13 @@ public class Model implements Disposable {
 					for (ModelNodeKeyframe<Vector3> kf : nanim.scaling) {
 						if (kf.keytime > animation.duration) animation.duration = kf.keytime;
 						nodeAnim.scaling.add(new NodeKeyframe<Vector3>(kf.keytime,
-								new Vector3(kf.value == null ? node.scale : kf.value)));
+							new Vector3(kf.value == null ? node.scale : kf.value)));
 					}
 				}
 
 				if ((nodeAnim.translation != null && nodeAnim.translation.size > 0)
-						|| (nodeAnim.rotation != null && nodeAnim.rotation.size > 0)
-						|| (nodeAnim.scaling != null && nodeAnim.scaling.size > 0))
-					animation.nodeAnimations.add(nodeAnim);
+					|| (nodeAnim.rotation != null && nodeAnim.rotation.size > 0)
+					|| (nodeAnim.scaling != null && nodeAnim.scaling.size > 0)) animation.nodeAnimations.add(nodeAnim);
 			}
 			if (animation.nodeAnimations.size > 0) animations.add(animation);
 		}
@@ -183,7 +160,7 @@ public class Model implements Disposable {
 
 	private ObjectMap<NodePart, ArrayMap<String, Matrix4>> nodePartBones = new ObjectMap<NodePart, ArrayMap<String, Matrix4>>();
 
-	protected void loadNodes(Iterable<ModelNode> modelNodes) {
+	protected void loadNodes (Iterable<ModelNode> modelNodes) {
 		nodePartBones.clear();
 		for (ModelNode node : modelNodes) {
 			nodes.add(loadNode(node));
@@ -197,7 +174,7 @@ public class Model implements Disposable {
 		}
 	}
 
-	protected Node loadNode(ModelNode modelNode) {
+	protected Node loadNode (ModelNode modelNode) {
 		Node node = new Node();
 		node.id = modelNode.id;
 
@@ -249,13 +226,13 @@ public class Model implements Disposable {
 		return node;
 	}
 
-	protected void loadMeshes(Iterable<ModelMesh> meshes) {
+	protected void loadMeshes (Iterable<ModelMesh> meshes) {
 		for (ModelMesh mesh : meshes) {
 			convertMesh(mesh);
 		}
 	}
 
-	protected void convertMesh(ModelMesh modelMesh) {
+	protected void convertMesh (ModelMesh modelMesh) {
 		int numIndices = 0;
 		for (ModelMeshPart part : modelMesh.parts) {
 			numIndices += part.indices.length;
@@ -286,13 +263,13 @@ public class Model implements Disposable {
 			part.update();
 	}
 
-	protected void loadMaterials(Iterable<ModelMaterial> modelMaterials, TextureProvider textureProvider) {
+	protected void loadMaterials (Iterable<ModelMaterial> modelMaterials, TextureProvider textureProvider) {
 		for (ModelMaterial mtl : modelMaterials) {
 			this.materials.add(convertMaterial(mtl, textureProvider));
 		}
 	}
 
-	protected Material convertMaterial(ModelMaterial mtl, TextureProvider textureProvider) {
+	protected Material convertMaterial (ModelMaterial mtl, TextureProvider textureProvider) {
 		Material result = new Material();
 		result.id = mtl.id;
 		if (mtl.ambient != null) result.set(new ColorAttribute(ColorAttribute.Ambient, mtl.ambient));
@@ -301,9 +278,7 @@ public class Model implements Disposable {
 		if (mtl.emissive != null) result.set(new ColorAttribute(ColorAttribute.Emissive, mtl.emissive));
 		if (mtl.reflection != null) result.set(new ColorAttribute(ColorAttribute.Reflection, mtl.reflection));
 		if (mtl.shininess > 0f) result.set(new FloatAttribute(FloatAttribute.Shininess, mtl.shininess));
-		if (mtl.alphaTest != -1f) result.set(new FloatAttribute(FloatAttribute.AlphaTest, mtl.alphaTest));
-		if (mtl.opacity != 1.f)
-			result.set(new BlendingAttribute(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA, mtl.opacity));
+		if (mtl.opacity != 1.f) result.set(new BlendingAttribute(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA, mtl.opacity));
 
 		ObjectMap<String, Texture> textures = new ObjectMap<String, Texture>();
 
@@ -331,30 +306,27 @@ public class Model implements Disposable {
 				float scaleV = tex.uvScaling == null ? 1f : tex.uvScaling.y;
 
 				switch (tex.usage) {
-					case ModelTexture.USAGE_DIFFUSE:
-						result.set(new TextureAttribute(TextureAttribute.Diffuse, descriptor, offsetU, offsetV, scaleU, scaleV));
-						break;
-					case ModelTexture.USAGE_SPECULAR:
-						result.set(new TextureAttribute(TextureAttribute.Specular, descriptor, offsetU, offsetV, scaleU, scaleV));
-						break;
-					case ModelTexture.USAGE_BUMP:
-						result.set(new TextureAttribute(TextureAttribute.Bump, descriptor, offsetU, offsetV, scaleU, scaleV));
-						break;
-					case ModelTexture.USAGE_NORMAL:
-						result.set(new TextureAttribute(TextureAttribute.Normal, descriptor, offsetU, offsetV, scaleU, scaleV));
-						break;
-					case ModelTexture.USAGE_AMBIENT:
-						result.set(new TextureAttribute(TextureAttribute.Ambient, descriptor, offsetU, offsetV, scaleU, scaleV));
-						break;
-					case ModelTexture.USAGE_EMISSIVE:
-						result.set(new TextureAttribute(TextureAttribute.Emissive, descriptor, offsetU, offsetV, scaleU, scaleV));
-						break;
-					case ModelTexture.USAGE_REFLECTION:
-						result.set(new TextureAttribute(TextureAttribute.Reflection, descriptor, offsetU, offsetV, scaleU, scaleV));
-						break;
-					case ModelTexture.USAGE_TRANSPARENCY:
-						result.set(new TextureAttribute(TextureAttribute.Transparency, descriptor, offsetU, offsetV, scaleU, scaleV));
-						break;
+				case ModelTexture.USAGE_DIFFUSE:
+					result.set(new TextureAttribute(TextureAttribute.Diffuse, descriptor, offsetU, offsetV, scaleU, scaleV));
+					break;
+				case ModelTexture.USAGE_SPECULAR:
+					result.set(new TextureAttribute(TextureAttribute.Specular, descriptor, offsetU, offsetV, scaleU, scaleV));
+					break;
+				case ModelTexture.USAGE_BUMP:
+					result.set(new TextureAttribute(TextureAttribute.Bump, descriptor, offsetU, offsetV, scaleU, scaleV));
+					break;
+				case ModelTexture.USAGE_NORMAL:
+					result.set(new TextureAttribute(TextureAttribute.Normal, descriptor, offsetU, offsetV, scaleU, scaleV));
+					break;
+				case ModelTexture.USAGE_AMBIENT:
+					result.set(new TextureAttribute(TextureAttribute.Ambient, descriptor, offsetU, offsetV, scaleU, scaleV));
+					break;
+				case ModelTexture.USAGE_EMISSIVE:
+					result.set(new TextureAttribute(TextureAttribute.Emissive, descriptor, offsetU, offsetV, scaleU, scaleV));
+					break;
+				case ModelTexture.USAGE_REFLECTION:
+					result.set(new TextureAttribute(TextureAttribute.Reflection, descriptor, offsetU, offsetV, scaleU, scaleV));
+					break;
 				}
 			}
 		}
@@ -362,40 +334,33 @@ public class Model implements Disposable {
 		return result;
 	}
 
-	/**
-	 * Adds a {@link Disposable} to be managed and disposed by this Model. Can be used to keep track of manually loaded textures
+	/** Adds a {@link Disposable} to be managed and disposed by this Model. Can be used to keep track of manually loaded textures
 	 * for {@link ModelInstance}.
-	 *
-	 * @param disposable the Disposable
-	 */
-	public void manageDisposable(Disposable disposable) {
+	 * @param disposable the Disposable */
+	public void manageDisposable (Disposable disposable) {
 		if (!disposables.contains(disposable, true)) disposables.add(disposable);
 	}
 
-	/**
-	 * @return the {@link Disposable} objects that will be disposed when the {@link #dispose()} method is called.
-	 */
-	public Iterable<Disposable> getManagedDisposables() {
+	/** @return the {@link Disposable} objects that will be disposed when the {@link #dispose()} method is called. */
+	public Iterable<Disposable> getManagedDisposables () {
 		return disposables;
 	}
 
 	@Override
-	public void dispose() {
+	public void dispose () {
 		for (Disposable disposable : disposables) {
 			disposable.dispose();
 		}
 	}
 
-	/**
-	 * Calculates the local and world transform of all {@link Node} instances in this model, recursively. First each
+	/** Calculates the local and world transform of all {@link Node} instances in this model, recursively. First each
 	 * {@link Node#localTransform} transform is calculated based on the translation, rotation and scale of each Node. Then each
 	 * {@link Node#calculateWorldTransform()} is calculated, based on the parent's world transform and the local transform of each
 	 * Node. Finally, the animation bone matrices are updated accordingly.</p>
-	 * <p>
+	 * 
 	 * This method can be used to recalculate all transforms if any of the Node's local properties (translation, rotation, scale)
-	 * was modified.
-	 */
-	public void calculateTransforms() {
+	 * was modified. */
+	public void calculateTransforms () {
 		final int n = nodes.size;
 		for (int i = 0; i < n; i++) {
 			nodes.get(i).calculateTransforms(true);
@@ -405,45 +370,35 @@ public class Model implements Disposable {
 		}
 	}
 
-	/**
-	 * Calculate the bounding box of this model instance. This is a potential slow operation, it is advised to cache the result.
-	 *
+	/** Calculate the bounding box of this model instance. This is a potential slow operation, it is advised to cache the result.
 	 * @param out the {@link BoundingBox} that will be set with the bounds.
-	 * @return the out parameter for chaining
-	 */
-	public BoundingBox calculateBoundingBox(final BoundingBox out) {
+	 * @return the out parameter for chaining */
+	public BoundingBox calculateBoundingBox (final BoundingBox out) {
 		out.inf();
 		return extendBoundingBox(out);
 	}
 
-	/**
-	 * Extends the bounding box with the bounds of this model instance. This is a potential slow operation, it is advised to cache
+	/** Extends the bounding box with the bounds of this model instance. This is a potential slow operation, it is advised to cache
 	 * the result.
-	 *
 	 * @param out the {@link BoundingBox} that will be extended with the bounds.
-	 * @return the out parameter for chaining
-	 */
-	public BoundingBox extendBoundingBox(final BoundingBox out) {
+	 * @return the out parameter for chaining */
+	public BoundingBox extendBoundingBox (final BoundingBox out) {
 		final int n = nodes.size;
 		for (int i = 0; i < n; i++)
 			nodes.get(i).extendBoundingBox(out);
 		return out;
 	}
 
-	/**
-	 * @param id The ID of the animation to fetch (case sensitive).
-	 * @return The {@link Animation} with the specified id, or null if not available.
-	 */
-	public Animation getAnimation(final String id) {
+	/** @param id The ID of the animation to fetch (case sensitive).
+	 * @return The {@link Animation} with the specified id, or null if not available. */
+	public Animation getAnimation (final String id) {
 		return getAnimation(id, true);
 	}
 
-	/**
-	 * @param id         The ID of the animation to fetch.
+	/** @param id The ID of the animation to fetch.
 	 * @param ignoreCase whether to use case sensitivity when comparing the animation id.
-	 * @return The {@link Animation} with the specified id, or null if not available.
-	 */
-	public Animation getAnimation(final String id, boolean ignoreCase) {
+	 * @return The {@link Animation} with the specified id, or null if not available. */
+	public Animation getAnimation (final String id, boolean ignoreCase) {
 		final int n = animations.size;
 		Animation animation;
 		if (ignoreCase) {
@@ -456,20 +411,16 @@ public class Model implements Disposable {
 		return null;
 	}
 
-	/**
-	 * @param id The ID of the material to fetch.
-	 * @return The {@link Material} with the specified id, or null if not available.
-	 */
-	public Material getMaterial(final String id) {
+	/** @param id The ID of the material to fetch.
+	 * @return The {@link Material} with the specified id, or null if not available. */
+	public Material getMaterial (final String id) {
 		return getMaterial(id, true);
 	}
 
-	/**
-	 * @param id         The ID of the material to fetch.
+	/** @param id The ID of the material to fetch.
 	 * @param ignoreCase whether to use case sensitivity when comparing the material id.
-	 * @return The {@link Material} with the specified id, or null if not available.
-	 */
-	public Material getMaterial(final String id, boolean ignoreCase) {
+	 * @return The {@link Material} with the specified id, or null if not available. */
+	public Material getMaterial (final String id, boolean ignoreCase) {
 		final int n = materials.size;
 		Material material;
 		if (ignoreCase) {
@@ -482,30 +433,24 @@ public class Model implements Disposable {
 		return null;
 	}
 
-	/**
-	 * @param id The ID of the node to fetch.
-	 * @return The {@link Node} with the specified id, or null if not found.
-	 */
-	public Node getNode(final String id) {
+	/** @param id The ID of the node to fetch.
+	 * @return The {@link Node} with the specified id, or null if not found. */
+	public Node getNode (final String id) {
 		return getNode(id, true);
 	}
 
-	/**
-	 * @param id        The ID of the node to fetch.
+	/** @param id The ID of the node to fetch.
 	 * @param recursive false to fetch a root node only, true to search the entire node tree for the specified node.
-	 * @return The {@link Node} with the specified id, or null if not found.
-	 */
-	public Node getNode(final String id, boolean recursive) {
+	 * @return The {@link Node} with the specified id, or null if not found. */
+	public Node getNode (final String id, boolean recursive) {
 		return getNode(id, recursive, false);
 	}
 
-	/**
-	 * @param id         The ID of the node to fetch.
-	 * @param recursive  false to fetch a root node only, true to search the entire node tree for the specified node.
+	/** @param id The ID of the node to fetch.
+	 * @param recursive false to fetch a root node only, true to search the entire node tree for the specified node.
 	 * @param ignoreCase whether to use case sensitivity when comparing the node id.
-	 * @return The {@link Node} with the specified id, or null if not found.
-	 */
-	public Node getNode(final String id, boolean recursive, boolean ignoreCase) {
+	 * @return The {@link Node} with the specified id, or null if not found. */
+	public Node getNode (final String id, boolean recursive, boolean ignoreCase) {
 		return Node.getNode(nodes, id, recursive, ignoreCase);
 	}
 }

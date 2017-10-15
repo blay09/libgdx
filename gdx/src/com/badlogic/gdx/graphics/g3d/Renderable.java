@@ -87,9 +87,6 @@ public class Renderable {
 	/** User definable value, may be null. */
 	public Object userData;
 
-	/** Attributes to override material and environment, e.g. for effects **/
-	public Attributes override;
-
 	public Renderable set (Renderable renderable) {
 		worldTransform.set(renderable.worldTransform);
 		material = renderable.material;
@@ -98,7 +95,6 @@ public class Renderable {
 		environment = renderable.environment;
 		shader = renderable.shader;
 		userData = renderable.userData;
-		override = renderable.override;
 		return this;
 	}
 }

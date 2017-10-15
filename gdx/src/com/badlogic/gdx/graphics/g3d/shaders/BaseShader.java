@@ -94,9 +94,8 @@ public abstract class BaseShader implements Shader {
 		public boolean validate (final BaseShader shader, final int inputID, final Renderable renderable) {
 			final long matFlags = (renderable != null && renderable.material != null) ? renderable.material.getMask() : 0;
 			final long envFlags = (renderable != null && renderable.environment != null) ? renderable.environment.getMask() : 0;
-			final long overrideFlags = (renderable != null && renderable.override != null) ? renderable.override.getMask() : 0;
 			return ((matFlags & materialMask) == materialMask) && ((envFlags & environmentMask) == environmentMask)
-				&& (((matFlags | envFlags | overrideFlags) & overallMask) == overallMask);
+				&& (((matFlags | envFlags) & overallMask) == overallMask);
 		}
 	}
 
@@ -231,7 +230,6 @@ public abstract class BaseShader implements Shader {
 		combinedAttributes.clear();
 		if (renderable.environment != null) combinedAttributes.set(renderable.environment);
 		if (renderable.material != null) combinedAttributes.set(renderable.material);
-		if (renderable.override != null) combinedAttributes.set(renderable.override);
 		render(renderable, combinedAttributes);
 	}
 
