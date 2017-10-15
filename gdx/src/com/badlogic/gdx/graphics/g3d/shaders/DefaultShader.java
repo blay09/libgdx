@@ -223,6 +223,12 @@ public class DefaultShader extends BaseShader {
 				shader.set(inputID, ((FloatAttribute)(combinedAttributes.get(FloatAttribute.Shininess))).value);
 			}
 		};
+		public final static Setter opacity = new LocalSetter() {
+			@Override
+			public void set (BaseShader shader, int inputID, Renderable renderable, Attributes combinedAttributes) {
+				shader.set(inputID, ((BlendingAttribute)(combinedAttributes.get(BlendingAttribute.Type))).opacity);
+			}
+		};
 		public final static Setter diffuseColor = new LocalSetter() {
 			@Override
 			public void set (BaseShader shader, int inputID, Renderable renderable, Attributes combinedAttributes) {
@@ -591,7 +597,7 @@ public class DefaultShader extends BaseShader {
 			: -1;
 
 		u_shininess = register(Inputs.shininess, Setters.shininess);
-		u_opacity = register(Inputs.opacity);
+		u_opacity = register(Inputs.opacity, Setters.opacity);
 		u_diffuseColor = register(Inputs.diffuseColor, Setters.diffuseColor);
 		u_diffuseTexture = register(Inputs.diffuseTexture, Setters.diffuseTexture);
 		u_diffuseUVTransform = register(Inputs.diffuseUVTransform, Setters.diffuseUVTransform);
@@ -822,7 +828,6 @@ public class DefaultShader extends BaseShader {
 			final long t = attr.type;
 			if (BlendingAttribute.is(t)) {
 				context.setBlending(true, ((BlendingAttribute)attr).sourceFunction, ((BlendingAttribute)attr).destFunction);
-				set(u_opacity, ((BlendingAttribute)attr).opacity);
 			} else if ((t & IntAttribute.CullFace) == IntAttribute.CullFace)
 				cullFace = ((IntAttribute)attr).value;
 			else if ((t & FloatAttribute.AlphaTest) == FloatAttribute.AlphaTest)
